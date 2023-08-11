@@ -1,4 +1,5 @@
 import datetime
+import re
 
 class PicoYPlacaPredictor:
     def __init__(self):
@@ -13,12 +14,19 @@ class PicoYPlacaPredictor:
     def get_last_digit(self, license_plate):
         return int(license_plate[-1])
     
+    def validate_license_plate(self, license_plate):
+        pattern = r'^[A-Za-z]{3}-[0-9]{3,4}$'
+        return bool(re.match(pattern, license_plate))
+    
     def can_drive(self, license_plate, date_str, time_str):
         try:
             date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
             time = datetime.datetime.strptime(time_str, "%H:%M")
         except ValueError:
             raise ValueError("Invalid date or time format.")
+        
+        if not self.validate_license_plate(license_plate):
+            raise ValueError("Invalid license plate format.")
         
         day_of_week = date.weekday()
         last_digit = self.get_last_digit(license_plate)

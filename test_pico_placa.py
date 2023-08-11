@@ -17,6 +17,15 @@ class TestPicoYPlacaPredictor(unittest.TestCase):
         # Wednesday, last digit 6, restricted time
         self.assertFalse(self.predictor.can_drive("XYZ-9876", "2023-08-16", "17:30"))
 
+    def test_valid_license_plate(self):
+        self.assertTrue(self.predictor.validate_license_plate("ABC-1234"))
+        self.assertTrue(self.predictor.validate_license_plate("XYZ-9876"))
+    
+    def test_invalid_license_plate(self):
+        self.assertFalse(self.predictor.validate_license_plate("AB12-123"))
+        self.assertFalse(self.predictor.validate_license_plate("ABC-12345"))
+        self.assertFalse(self.predictor.validate_license_plate("ABCD-123"))
+
     def test_invalid_date_format(self):
         with self.assertRaises(ValueError):
             self.predictor.can_drive("ABC-1234", "2023/08/14", "08:30")
@@ -36,9 +45,6 @@ class TestPicoYPlacaPredictor(unittest.TestCase):
         self.assertFalse(self.predictor.can_drive("XYZ-9876", "2023-08-16", "19:30"))
         # Test the earliest allowed time 
         self.assertTrue(self.predictor.can_drive("XYZ-9876", "2023-08-16", "19:31"))
-        
-
-
 
 if __name__ == "__main__":
     unittest.main()
