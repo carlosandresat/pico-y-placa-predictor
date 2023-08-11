@@ -1,10 +1,19 @@
 class PicoYPlacaPredictor:
     def __init__(self):
-        pass
+        self.rules = {
+            0: [1, 2],
+            1: [3, 4],
+            2: [5, 6],
+            3: [7, 8],
+            4: [9, 0]
+        }
+
+    def get_last_digit(self, license_plate):
+        return int(license_plate[-1])
     
     def can_drive(self, license_plate, date_str, time_str):
-        return True
-    
+        last_digit = self.get_last_digit(license_plate)
+        return last_digit % 2 == 0     #Placeholder condition
 
 def main():
     predictor = PicoYPlacaPredictor()
