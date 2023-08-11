@@ -55,13 +55,16 @@ class PicoYPlacaPredictor:
 
         return True
 
+def get_user_input(value):
+    return input(value).strip()
+
 def main():
     predictor = PicoYPlacaPredictor()
     
     try:
-        license_plate = input("Enter license plate number (e.g., ABC-1234): ")
-        date_str = input("Enter date (YYYY-MM-DD): ")
-        time_str = input("Enter time (HH:MM): ")
+        license_plate = get_user_input("Enter license plate number (e.g., ABC-1234): ")
+        date_str = get_user_input("Enter date (YYYY-MM-DD): ")
+        time_str = get_user_input("Enter time (HH:MM): ")
 
         if not license_plate or not date_str or not time_str:
             print("All fields are required.")
