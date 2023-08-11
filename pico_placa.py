@@ -10,13 +10,18 @@ class PicoYPlacaPredictor:
             3: [7, 8],
             4: [9, 0]
         }
-
-    def get_last_digit(self, license_plate):
-        return int(license_plate[-1])
     
     def validate_license_plate(self, license_plate):
         pattern = r'^[A-Za-z]{2,3}-[0-9]{3,4}$'
         return bool(re.match(pattern, license_plate))
+    
+    def get_last_digit(self, license_plate):
+        return int(license_plate[-1])
+    
+    def is_special_plate(self, license_plate):
+        special_plate_formats = ["CD", "CC", "OI", "AT"]
+        license_plate_prefix = license_plate.split("-")[0]
+        return license_plate_prefix in special_plate_formats
     
     def is_morning_restriction(self, time):
         return time >= datetime.datetime.strptime("07:00", "%H:%M") and time <= datetime.datetime.strptime("09:30", "%H:%M")
@@ -42,14 +47,11 @@ class PicoYPlacaPredictor:
         restricted_digits = self.rules.get(day_of_week, [])
 
         # Special plates can drive at any time
-        special_plate_formats = ["CD", "CC", "OI", "AT"]
-        license_plate_prefix = license_plate.split("-")[0]
-        if license_plate_prefix in special_plate_formats:
+        if self.is_special_plate(license_plate):
             return True
 
-        if last_digit in restricted_digits:
-            if (self.is_restricted_time(time)):
-                return False
+        if last_digit in restricted_digits and self.is_restricted_time(time):
+            return False
 
         return True
 
@@ -65,10 +67,10 @@ def main():
             print("All fields are required.")
             return
               
-        if predictor.can_drive(license_plate, date_str, time_str):
-            print("You can drive.")
-        else:
+        if not predictor.can_drive(license_plate, date_str, time_str):
             print("You can't drive during this time.")
+        else:
+            print("You can drive.")
     except ValueError as e:
         print(e)
 
