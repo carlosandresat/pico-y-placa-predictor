@@ -25,5 +25,20 @@ class TestPicoYPlacaPredictor(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.predictor.can_drive("ABC-1234", "2023-08-14", "8:30 AM")
 
+    def test_edge_cases(self):
+        # Sunday should not restrict any digit
+        self.assertTrue(self.predictor.can_drive("ABC-1234", "2023-08-13", "08:30"))
+        # Test the latest allowed time 
+        self.assertTrue(self.predictor.can_drive("XYZ-9876", "2023-08-16", "06:59"))
+        # Test the earliest restricted time
+        self.assertFalse(self.predictor.can_drive("XYZ-9876", "2023-08-16", "07:00"))
+        # Test the latest restricted time
+        self.assertFalse(self.predictor.can_drive("XYZ-9876", "2023-08-16", "19:30"))
+        # Test the earliest allowed time 
+        self.assertTrue(self.predictor.can_drive("XYZ-9876", "2023-08-16", "19:31"))
+        
+
+
+
 if __name__ == "__main__":
     unittest.main()

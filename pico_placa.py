@@ -19,9 +19,17 @@ class PicoYPlacaPredictor:
             time = datetime.datetime.strptime(time_str, "%H:%M")
         except ValueError:
             raise ValueError("Invalid date or time format.")
-
+        
+        day_of_week = date.weekday()
         last_digit = self.get_last_digit(license_plate)
-        return last_digit % 2 == 0     #Placeholder condition
+        restricted_digits = self.rules.get(day_of_week, [])
+
+        if last_digit in restricted_digits:
+            if (time >= datetime.datetime.strptime("07:00", "%H:%M") and time <= datetime.datetime.strptime("09:30", "%H:%M")) or \
+               (time >= datetime.datetime.strptime("16:00", "%H:%M") and time <= datetime.datetime.strptime("19:30", "%H:%M")):
+                return False
+
+        return True
 
 def main():
     predictor = PicoYPlacaPredictor()
