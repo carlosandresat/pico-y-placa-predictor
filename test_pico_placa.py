@@ -1,5 +1,4 @@
 import unittest
-from datetime import datetime, timedelta
 from pico_placa import PicoYPlacaPredictor
 
 class TestPicoYPlacaPredictor(unittest.TestCase):
@@ -17,6 +16,14 @@ class TestPicoYPlacaPredictor(unittest.TestCase):
         self.assertFalse(self.predictor.can_drive("ABC-1234", "2023-08-15", "08:30"))
         # Wednesday, last digit 6, restricted time
         self.assertFalse(self.predictor.can_drive("XYZ-9876", "2023-08-16", "17:30"))
+
+    def test_invalid_date_format(self):
+        with self.assertRaises(ValueError):
+            self.predictor.can_drive("ABC-1234", "2023/08/14", "08:30")
+    
+    def test_invalid_time_format(self):
+        with self.assertRaises(ValueError):
+            self.predictor.can_drive("ABC-1234", "2023-08-14", "8:30 AM")
 
 if __name__ == "__main__":
     unittest.main()
