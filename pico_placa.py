@@ -46,6 +46,10 @@ def main():
         license_plate = input("Enter license plate number (e.g., ABC-1234): ")
         date_str = input("Enter date (YYYY-MM-DD): ")
         time_str = input("Enter time (HH:MM): ")
+
+        if not license_plate or not date_str or not time_str:
+            print("All fields are required.")
+            return
               
         if predictor.can_drive(license_plate, date_str, time_str):
             print("You can drive.")
