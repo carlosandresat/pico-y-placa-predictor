@@ -15,8 +15,17 @@ class PicoYPlacaPredictor:
         return int(license_plate[-1])
     
     def validate_license_plate(self, license_plate):
-        pattern = r'^[A-Za-z]{3}-[0-9]{3,4}$'
+        pattern = r'^[A-Za-z]{2,3}-[0-9]{3,4}$'
         return bool(re.match(pattern, license_plate))
+    
+    def is_morning_restriction(self, time):
+        return time >= datetime.datetime.strptime("07:00", "%H:%M") and time <= datetime.datetime.strptime("09:30", "%H:%M")
+    
+    def is_evening_restriction(self, time):
+        return time >= datetime.datetime.strptime("16:00", "%H:%M") and time <= datetime.datetime.strptime("19:30", "%H:%M")
+        
+    def is_restricted_time(self, time):
+        return self.is_morning_restriction(time) or self.is_evening_restriction(time)
     
     def can_drive(self, license_plate, date_str, time_str):
         try:
@@ -32,9 +41,14 @@ class PicoYPlacaPredictor:
         last_digit = self.get_last_digit(license_plate)
         restricted_digits = self.rules.get(day_of_week, [])
 
+        # Special plates can drive at any time
+        special_plate_formats = ["CD", "CC", "OI", "AT"]
+        license_plate_prefix = license_plate.split("-")[0]
+        if license_plate_prefix in special_plate_formats:
+            return True
+
         if last_digit in restricted_digits:
-            if (time >= datetime.datetime.strptime("07:00", "%H:%M") and time <= datetime.datetime.strptime("09:30", "%H:%M")) or \
-               (time >= datetime.datetime.strptime("16:00", "%H:%M") and time <= datetime.datetime.strptime("19:30", "%H:%M")):
+            if (self.is_restricted_time(time)):
                 return False
 
         return True

@@ -34,6 +34,15 @@ class TestPicoYPlacaPredictor(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.predictor.can_drive("ABC-1234", "2023-08-14", "8:30 AM")
 
+    def test_special_cases(self):
+        
+        # Special plates can drive at any time
+        special_plates = ["CD-0001", "CC-0001", "OI-0001", "AT-0001"]
+        for plate in special_plates:
+            self.assertTrue(self.predictor.can_drive(plate, "2023-08-14", "08:30"))
+        # Old plate with 3 digits, can drive during allowed time
+        self.assertTrue(self.predictor.can_drive("ABC-123", "2023-08-14", "08:30"))
+    
     def test_edge_cases(self):
         # Sunday should not restrict any digit
         self.assertTrue(self.predictor.can_drive("ABC-1234", "2023-08-13", "08:30"))
